@@ -5,6 +5,8 @@ import { SiteModule } from './site/site.module';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Site } from './site/entities/site.entity';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { Site } from './site/entities/site.entity';
       autoLoadModels: true,
       synchronize: true,
     }),
-    SiteModule
+    SiteModule,
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService, ],
