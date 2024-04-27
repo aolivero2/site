@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { SiteService } from './site.service';
 import { CreateSiteDto } from './dto/create-site.dto';
 import { UpdateSiteDto } from './dto/update-site.dto';
 import { Response } from 'express';
+import { AuthGuard } from 'src/auth/auth/auth.guard';
 
 @Controller('site')
 export class SiteController {
   constructor(private readonly siteService: SiteService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() createSiteDto: CreateSiteDto, @Res({passthrough: true}) response: Response) {
     try {
       response.status(HttpStatus.CREATED);
@@ -19,11 +21,13 @@ export class SiteController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.siteService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string, @Res({passthrough: true}) response: Response) {
     try {
@@ -40,6 +44,7 @@ export class SiteController {
     
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateSiteDto: UpdateSiteDto, @Res({passthrough: true}) response: Response) {
     try {
@@ -55,7 +60,8 @@ export class SiteController {
     }
     return this.siteService.update(+id, updateSiteDto);
   }
-
+  
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.siteService.remove(+id);

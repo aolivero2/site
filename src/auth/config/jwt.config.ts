@@ -5,27 +5,24 @@ import { readFile } from "fs/promises";
 export const jwtConfig: JwtModuleAsyncOptions = {
     imports: [ConfigModule],
     useFactory: async(configService: ConfigService) => {
-        let publicKey = await readFile(configService.get<string>("JWT_PUBLIC_KEY_FILE"))
-        let privateKey = await readFile(configService.get<string>("JWT_PRIVATE_KEY_FILE"))
+        let publicKey = await readFile(configService.get<string>("JWT_PUBLIC_KEY_FILE"));
+        let privateKey = await readFile(configService.get<string>("JWT_PRIVATE_KEY_FILE"));
+        let issuer = configService.get<string>("JWT_ISSUER");
+        let audience = configService.get<string>("JWT_AUDIENCE");
 
         return {
-            secretOrKeyProvider: (requestType) => {
-                switch (requestType) {
-                  case JwtSecretRequestType.SIGN:
-                    return privateKey;
-                
-                  case JwtSecretRequestType.VERIFY:
-                    return publicKey;
-
-                  default:
-                    break;
-                }
-            },
+            publicKey,
+            privateKey,
             signOptions: {
                 expiresIn: "1h",
                 algorithm: "ES512",
-                issuer: configService.get<string>("JWT_ISSUER"),
-                audience: configService.get<string>("JWT_AUDIENCE"),
+                issuer,
+                audience,
+            },
+            verifyOptions: {
+              algorithms: ["ES512"],
+              issuer,
+              audience,
             }
         }
       
